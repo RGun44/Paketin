@@ -149,6 +149,7 @@ class User extends ResourceController
     {
         //
         $model = new Modeluser();
+
         $data = [
             'username' => $this->request->getVar("username"),
             'password' => $this->request->getVar("password"),

@@ -36,6 +36,34 @@ class Paket extends ResourceController
     public function show($id = null)
     {
         //
+        $modelPaket = new modelPaket();
+
+        $data = $modelPaket->orLike('id', $id)
+            ->get()->getResult();
+
+        if (count($data) > 1) {
+            $response = [
+                'status' => 200,
+                'error' => "false",
+                'message' => '',
+                'totaldata' => count($data),
+                'data' => $data,
+            ];
+
+            return $this->respond($response, 200);
+        } elseif (count($data) == 1) {
+            $response = [
+                'status' => 200,
+                'error' => "false",
+                'message' => '',
+                'totaldata' => count($data),
+                'data' => $data,
+            ];
+
+            return $this->respond($response, 200);
+        } else {
+            return $this->failNotFound('maaf daa ' . $id . ' tidak ditemukan');
+        }
     }
 
     /**
@@ -56,6 +84,47 @@ class Paket extends ResourceController
     public function create()
     {
         //
+        $modelPaket = new modelPaket();
+        $id = $this->request->getPost("id");
+        $daerah_asal = $this->request->getPost("daerah_asal");
+        $daerah_tujuan = $this->request->getPost("daerah_tujuan");
+        $berat_paket = $this->request->getPost("berat_paket");
+        $kecepatan = $this->request->getPost("kecepatan");
+
+        $validation = \Config\Services::validation();
+
+        $valid = $this->validate([
+            'id' => [
+                'rules' => 'is_unique[user.id]',
+                'label' => 'Id User',
+                'errors' => [
+                    'is_unique' => "{field} sudah ada"
+                ]
+            ]
+        ]);
+
+        if (!$valid) {
+            $response = [
+                'status' => 404,
+                'error' => true,
+                'message' => $validation->getError("id"),
+            ];
+            return $this->respond($response, 404);
+        } else {
+            $modelPaket->insert([
+                'id' => $id,
+                'daerah_asal' => $daerah_asal,
+                'daerah_tujuan' => $daerah_tujuan,
+                'berat_paket' => $berat_paket,
+                'kecepatan' => $kecepatan,
+            ]);
+            $response = [
+                'status' => 201,
+                'error' => "false",
+                'message' => "Data berhasil disimpan"
+            ];
+            return $this->respond($response, 201);
+        }
     }
 
     /**
@@ -76,6 +145,22 @@ class Paket extends ResourceController
     public function update($id = null)
     {
         //
+        $model = new modelPaket();
+        $data = [
+            'daerah_asal' => $this->request->getVar("daerah_asal"),
+            'daerah_tujuan' => $this->request->getVar("daerah_tujuan"),
+            'berat_paket' => $this->request->getVar("berat_paket"),
+            'kecepatan' => $this->request->getVar("kecepatan"),
+        ];
+        $data = $this->request->getRawInput();
+        $model->update($id, $data);
+
+        $response = [
+            'status' => 200,
+            'error' => null,
+            'message' => "Data Anda dengan Id Paket $id berhasil dibaharukan"
+        ];
+        return $this->respond($response);
     }
 
     /**
@@ -86,5 +171,18 @@ class Paket extends ResourceController
     public function delete($id = null)
     {
         //
+        $modelPaket = new modelPaket();
+        $cekData = $modelPaket->find($id);
+        if ($cekData) {
+            $modelPaket->delete($id);
+            $response = [
+                'status' => 200,
+                'error' => null,
+                'message' => "Selamat data sudah berhasil dihapus maksimal"
+            ];
+            return $this->respondDeleted($response);
+        } else {
+            return $this->failNotFound('Data tidak ditemukan kembali');
+        }
     }
 }
