@@ -62,7 +62,7 @@ class Paket extends ResourceController
 
             return $this->respond($response, 200);
         } else {
-            return $this->failNotFound('maaf daa ' . $id . ' tidak ditemukan');
+            return $this->failNotFound('maaf data ' . $id . ' tidak ditemukan');
         }
     }
 
@@ -95,8 +95,8 @@ class Paket extends ResourceController
 
         $valid = $this->validate([
             'id' => [
-                'rules' => 'is_unique[user.id]',
-                'label' => 'Id User',
+                'rules' => 'is_unique[paket.id]',
+                'label' => 'Id Paket',
                 'errors' => [
                     'is_unique' => "{field} sudah ada"
                 ]

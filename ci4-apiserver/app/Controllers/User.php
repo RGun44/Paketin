@@ -62,7 +62,7 @@ class User extends ResourceController
 
             return $this->respond($response, 200);
         } else {
-            return $this->failNotFound('maaf daa ' . $id . ' tidak ditemukan');
+            return $this->failNotFound('maaf data ' . $id . ' tidak ditemukan');
         }
     }
 
